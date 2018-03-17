@@ -1,0 +1,5 @@
+{{ object.title }}
+{{ object.category }}
+{{ object.pub_date }}
+{{ object.update_time }}
+{{ object.content }}

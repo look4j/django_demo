@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'haystack',
     'blog'
 ]
 
@@ -122,10 +123,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# APPEND_SLASH = False
-# PREPEND_WWW = False
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 3
+}
+
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 8
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+# ELASTICSEARCH_DEFAULT_ANALYZER = 'ik_max_word'
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'blog.ik_elasticsearch_backend.IkElasticsearchSearchEngine',
+        'URL': 'http://192.168.99.100:9200',
+        'INDEX_NAME': 'haystack',
+    },
 }
