@@ -1,12 +1,14 @@
 import {connect} from 'dva';
-import {Table, Pagination, Popconfirm, Button} from 'antd';
+import {Table, Pagination, Popconfirm, Button, Input} from 'antd';
 import {routerRedux} from 'dva/router';
 import moment from 'moment'
 import styles from './Articles.css';
 import {PAGE_SIZE} from '../constants'
 import ArticleModal from './ArticleModal'
-window.moment = moment
-function Articles({dispatch, list: dataSource, loading, total, page: current}) {
+
+const Search = Input.Search
+
+function Articles({dispatch, list: dataSource, loading, total, page: current, search}) {
   function deleteHandler(id) {
     dispatch({
       type: 'articles/remove',
@@ -17,7 +19,7 @@ function Articles({dispatch, list: dataSource, loading, total, page: current}) {
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
       pathname: '/articles',
-      query: {page},
+      query: {page, search},
     }));
   }
 
@@ -33,6 +35,20 @@ function Articles({dispatch, list: dataSource, loading, total, page: current}) {
       type: 'articles/patch',
       payload: {id, values},
     });
+  }
+
+  function searchChangeHandler(event) {
+    dispatch({
+      type: 'articles/change_search',
+      payload: event.target.value
+    })
+  }
+
+  function searchHandler() {
+    dispatch(routerRedux.push({
+      pathname: '/articles',
+      query: {search},
+    }));
   }
 
   const columns = [
@@ -86,6 +102,13 @@ function Articles({dispatch, list: dataSource, loading, total, page: current}) {
           <ArticleModal record={{}} onOk={createHandler}>
             <Button type="primary">Create Article</Button>
           </ArticleModal>
+          <Search
+            className={styles.search}
+            onChange={searchChangeHandler}
+            onSearch={searchHandler}
+            value={search}
+            enterButton
+          />
         </div>
         <Table
           loading={loading}
@@ -107,11 +130,12 @@ function Articles({dispatch, list: dataSource, loading, total, page: current}) {
 }
 
 function mapStateToProps(state) {
-  const {list, total, page} = state.articles;
+  const {list, total, page, search} = state.articles;
   return {
     list,
     total,
     page,
+    search,
     loading: state.loading.models.articles
   };
 }

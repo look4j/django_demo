@@ -6,21 +6,25 @@ export default {
     list: [],
     total: null,
     page: null,
+    search: null,
   },
   reducers: {
     save(state, {payload: {data: list, total, page}}) {
       return {...state, list, total, page};
     },
+    change_search(state, {payload: search}) {
+      return {...state, search}
+    }
   },
   effects: {
-    * fetch({payload: {page = 1}}, {call, put}) {
-      const {data} = yield call(articlesService.fetch, {page});
+    * fetch({payload: {page = 1, search}}, {call, put}) {
+      const {data} = yield call(articlesService.fetch, {page, search});
       yield put({
         type: 'save',
         payload: {
           data: data['results'],
           total: parseInt(data['count'], 10),
-          page: parseInt(page, 10)
+          page: parseInt(page, 10),
         }
       });
     },
