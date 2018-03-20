@@ -5,6 +5,7 @@ import moment from 'moment'
 import styles from './Articles.css';
 import {PAGE_SIZE} from '../constants'
 import ArticleModal from './ArticleModal'
+import Link from 'umi/link'
 
 const Search = Input.Search
 
@@ -61,7 +62,7 @@ function Articles({dispatch, list: dataSource, loading, total, page: current, se
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
-      render: text => <a href="">{text}</a>,
+      render: (text, record) => <Link to={`/articles/${record.id}`}>{text}</Link>,
     },
     {
       title: 'Category',
@@ -84,7 +85,7 @@ function Articles({dispatch, list: dataSource, loading, total, page: current, se
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation}>
-                   <ArticleModal record={record} onOk={editHandler.bind(null, record.id)}>
+          <ArticleModal record={record} onOk={editHandler.bind(null, record.id)}>
             <a>Edit</a>
           </ArticleModal>
           <Popconfirm title="Confirm to delete?" onConfirm={deleteHandler.bind(null, record.id)}>

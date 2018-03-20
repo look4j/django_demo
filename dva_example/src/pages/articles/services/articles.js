@@ -1,13 +1,19 @@
 import {PAGE_SIZE} from '../constants'
 import request from '../../../utils/request';
 import _ from 'lodash'
-window._ = _
+
 export function fetch({page = 1, search}) {
   if (_.isEmpty(search)) {
     return request(`/api/articles?page=${page}&limit=${PAGE_SIZE}`)
   } else {
     return request(`/api/articles?page=${page}&limit=${PAGE_SIZE}&search=${search}`)
   }
+}
+
+export function detail(id) {
+  return request(`/api/articles/${id}`, {
+    method: 'GET'
+  })
 }
 
 export function remove(id) {
