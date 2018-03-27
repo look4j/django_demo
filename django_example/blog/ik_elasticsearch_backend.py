@@ -1,22 +1,25 @@
-from haystack.backends.elasticsearch_backend import ElasticsearchSearchEngine, ElasticsearchSearchBackend
+from haystack.backends.elasticsearch_backend import ElasticsearchSearchEngine, ElasticsearchSearchBackend, \
+    FIELD_MAPPINGS, DEFAULT_FIELD_MAPPING
 from haystack.constants import DJANGO_CT, DJANGO_ID
+from haystack.indexes import CharField
 
-DEFAULT_FIELD_MAPPING = {'type': 'string', 'analyzer': 'ik_max_word'}
-FIELD_MAPPINGS = {
-    'edge_ngram': {'type': 'string', 'analyzer': 'edgengram_analyzer'},
-    'ngram': {'type': 'string', 'analyzer': 'ngram_analyzer'},
-    'date': {'type': 'date'},
-    'datetime': {'type': 'date'},
 
-    'location': {'type': 'geo_point'},
-    'boolean': {'type': 'boolean'},
-    'float': {'type': 'float'},
-    'long': {'type': 'long'},
-    'integer': {'type': 'long'},
-}
+class IkCharField(CharField):
+
+    def __init__(self, **kwargs):
+        self.analyzer = kwargs.pop('analyzer', None)
+        self.term_vector = kwargs.pop('term_vector', None)
+        super(IkCharField, self).__init__(**kwargs)
 
 
 class IkElasticsearchSearchBackend(ElasticsearchSearchBackend):
+
+    def raw_search(self):
+        raw_results = self.conn.search(body=search_kwargs,
+                                       index=self.index_name,
+                                       doc_type='modelresult',
+                                       _source=True)
+        return raw_results
 
     def build_schema(self, fields):
         content_field_name = ''
@@ -38,6 +41,12 @@ class IkElasticsearchSearchBackend(ElasticsearchSearchBackend):
                 if field_class.indexed is False or hasattr(field_class, 'facet_for'):
                     field_mapping['index'] = 'not_analyzed'
                     del field_mapping['analyzer']
+
+            if isinstance(field_class, IkCharField):
+                if field_class.term_vector:
+                    field_mapping['term_vector'] = field_class.term_vector
+                if field_class.analyzer:
+                    field_mapping['analyzer'] = field_class.analyzer
 
             mapping[field_class.index_fieldname] = field_mapping
 

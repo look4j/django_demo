@@ -16,6 +16,12 @@ export function detail(id) {
   })
 }
 
+export function more_like_this(id) {
+  return request(`/api/articles/${id}/more_like_this`, {
+    method: 'GET'
+  })
+}
+
 export function remove(id) {
   return request(`/api/articles/${id}`, {
     method: 'DELETE',

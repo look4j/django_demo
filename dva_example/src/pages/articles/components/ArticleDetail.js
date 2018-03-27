@@ -1,9 +1,10 @@
 import {connect} from 'dva'
-import {Card} from 'antd'
+import {Card, List} from 'antd'
 import {markdown} from 'markdown'
+import Link from 'umi/link'
 import styles from './ArticleDetail.css'
 
-const ArticleDetail = ({record}) => {
+const ArticleDetail = ({record, list}) => {
 
   function title(record) {
     return <h1>{record && record.title}</h1>
@@ -16,16 +17,21 @@ const ArticleDetail = ({record}) => {
 
   return (
     <div className={styles.normal}>
-      <Card title={title(record)}>
-        <div dangerouslySetInnerHTML={content(record)}/>
-      </Card>
+      <div>{title(record)}</div>
+      <div dangerouslySetInnerHTML={content(record)}/>
+      <hr />
+      <h3>相关推荐</h3>
+      <ul>
+        {list.map(item => (<li><Link to={`/articles/${item.id}`}>{item.title}</Link></li>))}
+      </ul>
     </div>
   )
 }
 
 function mapStateToProps(state) {
-  const {record} = state.article;
+  const {record, list} = state.article;
   return {
+    list,
     record,
     loading: state.loading.models.article
   };
