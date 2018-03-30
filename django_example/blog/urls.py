@@ -8,4 +8,6 @@ router.register(r'articles', views.ArticleViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('auth', include('rest_framework.urls')),
+    path('sessions', views.SessionViewSet.as_view()),
 ]

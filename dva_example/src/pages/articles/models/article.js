@@ -5,7 +5,7 @@ import _ from 'lodash'
 export default {
   namespace: 'article',
   state: {
-    record: null,
+    record: {},
     list: []
   },
   reducers: {

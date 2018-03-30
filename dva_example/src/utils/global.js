@@ -1,3 +1,4 @@
 import moment from 'moment'
-moment.locale('zh-cn')
+import '../pages/sessions/services/sessions'
 
+moment.locale('zh-cn')

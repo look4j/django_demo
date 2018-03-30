@@ -1,11 +1,15 @@
-import fetch from 'dva/fetch';
+import fetch from 'dva/fetch'
 
 function parseJSON(response) {
-  return response.json();
+  return response.headers.get('content-type') === 'application/json' ? response.json() : null
 }
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
+    return response;
+  }
+
+  if (response.status === 401) {
     return response;
   }
 
@@ -22,10 +26,11 @@ function checkStatus(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options = {}) {
-  options.headers = Object.assign({}, options.headers, { 'Content-Type': 'application/json' })
+  options.headers = Object.assign({}, options.headers, {'Content-Type': 'application/json'})
+  options.credentials = 'include'
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)
-    .then(data => ({ data }))
-    .catch(err => ({ err }));
+    .then(data => ({data}))
+  // .catch(err => ({ err }));
 }

@@ -1,7 +1,9 @@
-import {Menu, Icon} from 'antd';
-import Link from 'umi/link';
+import {Menu, Icon} from 'antd'
+import Link from 'umi/link'
+import Session from './Session'
 
-function Header({location}) {
+function Header({session, dispatch, location}) {
+
   return (
     <Menu
       selectedKeys={[location.pathname]}
@@ -14,11 +16,8 @@ function Header({location}) {
       <Menu.Item key="/articles">
         <Link to="/articles"><Icon type="bars"/>Articles</Link>
       </Menu.Item>
-      <Menu.Item key="/umi">
-        <a href="https://github.com/umijs/umi" target="_blank">umi</a>
-      </Menu.Item>
-      <Menu.Item key="/dva">
-        <a href="https://github.com/dvajs/dva" target="_blank">dva</a>
+      <Menu.Item key="/login">
+        <Session>Login</Session>
       </Menu.Item>
       <Menu.Item key="/404">
         <Link to="/page-you-dont-know"><Icon type="frown-circle"/>404</Link>
@@ -27,4 +26,4 @@ function Header({location}) {
   );
 }
 
-export default Header;
+export default Header
